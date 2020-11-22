@@ -3,6 +3,8 @@ const http = require('http');
 const intervals = [];
 
 http.createServer((req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+
   if (req.url === '/start') {
     const interval = setInterval(() => {
       console.log(getTime());
@@ -10,21 +12,20 @@ http.createServer((req, res) => {
 
     intervals.push(interval);
 
-    res.setHeader('Content-Type', 'application/json');
     res.write(JSON.stringify({ success: true }));
-    res.end();
   } else if (req.url === '/stop') {
     if (intervals.length > 0) clearInterval(intervals.pop());
 
-    res.setHeader('Content-Type', 'application/json');
     const response = {
       success: true,
       intervalsLeft: intervals.length,
       datetime: getTime()
     };
+
     res.write(JSON.stringify(response));
-    res.end();
   }
+
+  res.end();
 }).listen(3000);
 
 function getTime () {
